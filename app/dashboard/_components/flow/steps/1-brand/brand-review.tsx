@@ -1,7 +1,7 @@
-import type { BrandIdentity } from "../../_data/brand";
-import { EditRow } from "./flow-primitives";
+import type { BrandIdentity } from "@/app/dashboard/_data/brand";
+import { EditRow } from "@/app/dashboard/_components/flow/flow-primitives";
 
-/** Frame 4 of the flow: confirm what the scrape pulled off the homepage. */
+/** Read-only presentation of the scraped/saved branding — logos, colors, fonts. */
 export function BrandReview({ brand }: { brand: BrandIdentity }) {
   return (
     <div className="flex flex-col gap-7">

@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,24 +11,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { scrapeBrand, type BrandIdentity } from "../../_data/brand";
-import { BrandReview } from "./brand-review";
-import {
-  Chip,
-  FlowStep,
-  OptionCard,
-  PillInput,
-  ScanningStep,
-} from "./flow-primitives";
+import { type BrandIdentity } from "@/app/dashboard/_data/brand";
+import { BrandStep, type BrandMode } from "@/app/dashboard/_components/flow/steps/1-brand/brand-step";
+import { SectionsStep } from "@/app/dashboard/_components/flow/steps/2-sections-step";
+import { SetupStep, type PageSetup } from "@/app/dashboard/_components/flow/steps/3-setup-step";
+import { DoneStep } from "@/app/dashboard/_components/flow/steps/4-done-step";
 
 /** Constant for every run, so committing the brand can never re-index the flow. */
 const STEPS = ["brand", "sections", "setup", "done"] as const;
-
-const SUGGESTED_SECTIONS = [
-  { area: "Hero", blocks: ["Headline", "Subhead", "Call to action"] },
-  { area: "Services", blocks: ["Intro", "Service list"] },
-  { area: "Contact", blocks: ["Form"] },
-];
 
 type NewPageFlowProps = {
   open: boolean;
@@ -48,7 +38,7 @@ export function NewPageFlow({
   const [url, setUrl] = useState("");
   const [slug, setSlug] = useState("");
   const [draftBrand, setDraftBrand] = useState<BrandIdentity | null>(null);
-  const [setup, setSetup] = useState<"assisted" | "blank">("assisted");
+  const [setup, setSetup] = useState<PageSetup>("assisted");
   const [isScanning, setIsScanning] = useState(false);
   /** Set only when the user explicitly asks to scan a different site. */
   const [forceInput, setForceInput] = useState(false);
@@ -58,7 +48,7 @@ export function NewPageFlow({
 
   // Screen 1 shows the saved branding when we have it, the URL field otherwise —
   // and re-scanning is always one click away from the review.
-  const brandMode: "review" | "input" | "scanning" = isScanning
+  const brandMode: BrandMode = isScanning
     ? "scanning"
     : forceInput || !activeBrand
       ? "input"
@@ -90,16 +80,22 @@ export function NewPageFlow({
     setStepIndex((i) => Math.max(i - 1, 0));
   }
 
-  // The scanning screen is purely a transition.
-  useEffect(() => {
-    if (!isScanning) return;
-    const timer = setTimeout(() => {
-      setDraftBrand(scrapeBrand(url));
-      setIsScanning(false);
-      setForceInput(false);
-    }, 1800);
-    return () => clearTimeout(timer);
-  }, [isScanning, url]);
+  const handleScanned = useCallback((scanned: BrandIdentity) => {
+    setDraftBrand(scanned);
+    setIsScanning(false);
+    setForceInput(false);
+  }, []);
+
+  function handleConfirmBrand() {
+    if (draftBrand) onBrandChange(draftBrand);
+    next();
+  }
+
+  function handleRescan() {
+    setUrl("");
+    setDraftBrand(null);
+    setForceInput(true);
+  }
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -138,173 +134,31 @@ export function NewPageFlow({
         </header>
 
         <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-6 py-10">
-          {step === "brand" && brandMode === "input" && (
-            <FlowStep
-              title={
-                brand
-                  ? "Which site should we pull branding from?"
-                  : "What's your law firm's URL?"
-              }
-            >
-              <form
-                className="flex flex-col items-start gap-3"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  if (url.trim()) setIsScanning(true);
-                }}
-              >
-                <PillInput
-                  autoFocus
-                  value={url}
-                  onChange={(event) => setUrl(event.target.value)}
-                  placeholder="www."
-                  aria-label="Law firm homepage URL"
-                  className="w-full max-w-md"
-                />
-                <p className="max-w-md text-xs text-muted-foreground">
-                  {brand
-                    ? "This replaces the branding saved for your workspace."
-                    : "We only scan this once — every page you create afterwards reuses the branding we find."}
-                </p>
-                <Button
-                  type="submit"
-                  disabled={!url.trim()}
-                  className="ml-auto rounded-full border-2 bg-background px-5 text-foreground hover:bg-muted"
-                >
-                  Confirm
-                </Button>
-              </form>
-            </FlowStep>
-          )}
-
-          {step === "brand" && brandMode === "scanning" && (
-            <ScanningStep label="Justice is scanning…" />
-          )}
-
-          {step === "brand" && brandMode === "review" && activeBrand && (
-            <FlowStep
-              title={
-                draftBrand
-                  ? "We pulled your branding! Let us know if it's correct:"
-                  : "Here's the branding we have on file:"
-              }
-            >
-              <BrandReview brand={activeBrand} />
-
-              <div className="mt-10 flex items-center gap-3">
-                <Button
-                  onClick={() => {
-                    if (draftBrand) onBrandChange(draftBrand);
-                    next();
-                  }}
-                  className="rounded-full bg-success px-6 text-success-foreground hover:bg-success/80"
-                >
-                  Looks good
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setUrl("");
-                    setDraftBrand(null);
-                    setForceInput(true);
-                  }}
-                >
-                  Scan a different site
-                </Button>
-              </div>
-            </FlowStep>
+          {step === "brand" && (
+            <BrandStep
+              mode={brandMode}
+              savedBrand={brand}
+              activeBrand={activeBrand}
+              isFreshScan={Boolean(draftBrand)}
+              url={url}
+              onUrlChange={setUrl}
+              onSubmitUrl={() => setIsScanning(true)}
+              onScanned={handleScanned}
+              onConfirm={handleConfirmBrand}
+              onRescan={handleRescan}
+            />
           )}
 
           {step === "sections" && (
-            <FlowStep title="Confirm the sections on this page:">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="page-slug" className="text-xs font-medium">
-                  Page URL
-                </label>
-                <PillInput
-                  id="page-slug"
-                  value={slug}
-                  onChange={(event) => setSlug(event.target.value)}
-                  placeholder="/pricing"
-                  className="max-w-xs"
-                />
-              </div>
-
-              <div className="mt-8 flex flex-wrap items-start gap-3">
-                {SUGGESTED_SECTIONS.map((section) => (
-                  <div key={section.area} className="flex w-44 flex-col gap-2">
-                    <Chip tone="solid">{section.area}</Chip>
-                    {section.blocks.map((block) => (
-                      <Chip key={block}>{block}</Chip>
-                    ))}
-                    <Chip tone="outline">Add block&hellip;</Chip>
-                  </div>
-                ))}
-                <div className="flex w-44 flex-col gap-2">
-                  <Chip tone="outline">Add section&hellip;</Chip>
-                </div>
-              </div>
-
-              <Button
-                onClick={next}
-                className="mt-10 rounded-full bg-success px-6 text-success-foreground hover:bg-success/80"
-              >
-                Looks good
-              </Button>
-            </FlowStep>
+            <SectionsStep slug={slug} onSlugChange={setSlug} onNext={next} />
           )}
 
           {step === "setup" && (
-            <FlowStep title="How should we set up this page?">
-              <div className="flex flex-wrap gap-3">
-                <OptionCard
-                  title="Conversion Intelligence"
-                  recommended
-                  bullets={[
-                    "Full AI optimization",
-                    "Chat-like experience for clients",
-                  ]}
-                  selected={setup === "assisted"}
-                  onSelect={() => setSetup("assisted")}
-                />
-                <OptionCard
-                  title="Traditional Set Up"
-                  bullets={[
-                    "AI assisted set up",
-                    "Optimized library of workflows",
-                    "You control all messaging",
-                  ]}
-                  selected={setup === "blank"}
-                  onSelect={() => setSetup("blank")}
-                />
-              </div>
-
-              <Button
-                onClick={next}
-                className="mt-10 rounded-full bg-success px-6 text-success-foreground hover:bg-success/80"
-              >
-                Create page
-              </Button>
-            </FlowStep>
+            <SetupStep setup={setup} onSetupChange={setSetup} onNext={next} />
           )}
 
           {step === "done" && (
-            <FlowStep title="Your page is ready!">
-              <p className="text-sm text-muted-foreground">
-                {slug || "/untitled"} was created with{" "}
-                {setup === "assisted"
-                  ? "Conversion Intelligence"
-                  : "a traditional set up"}
-                {activeBrand ? `, styled from ${activeBrand.sourceUrl}` : ""}.
-              </p>
-              <DialogClose
-                render={
-                  <Button className="mt-8 rounded-full bg-success px-6 text-success-foreground hover:bg-success/80" />
-                }
-              >
-                Open page
-              </DialogClose>
-            </FlowStep>
+            <DoneStep slug={slug} setup={setup} brand={activeBrand} />
           )}
         </div>
       </DialogContent>
