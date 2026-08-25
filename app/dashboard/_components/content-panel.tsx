@@ -22,7 +22,7 @@ export function ContentPanel({ page }: ContentPanelProps) {
   }
 
   return (
-    <section className="flex min-w-0 flex-1 flex-col">
+    <section className="flex min-w-0 flex-1 flex-col bg-background">
       <header className="flex items-center justify-between gap-4 px-6 py-3">
         <div className="min-w-0">
           <h1 className="truncate text-sm font-medium">{page.label}</h1>

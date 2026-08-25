@@ -16,7 +16,7 @@ import { stats, type Stat } from "../_data/analytics";
 
 export function AnalyticsPanel() {
   return (
-    <section className="flex min-w-0 flex-1 flex-col">
+    <section className="flex min-w-0 flex-1 flex-col bg-background">
       <header className="px-6 py-3">
         <h1 className="text-sm font-medium">Home</h1>
         <p className="text-xs text-muted-foreground">Last 30 days</p>

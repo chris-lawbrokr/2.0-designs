@@ -109,7 +109,7 @@ export function SiteWidgetPreview({
         </div>
 
         <div className="flex flex-wrap items-stretch gap-3">
-          <div className="flex min-w-52 flex-1 flex-col gap-1 rounded-2xl bg-white/5 p-4">
+          <div className="flex min-w-52 flex-1 flex-col gap-1 rounded-2xl bg-neutral-900 p-4">
             <span className="text-[0.65rem] font-medium tracking-wide text-white/40">
               FROM THE BLOG
             </span>
@@ -119,7 +119,7 @@ export function SiteWidgetPreview({
             <span className="text-xs text-brand">Read the blog &rarr;</span>
           </div>
 
-          <div className="flex flex-1 items-center justify-around gap-4 rounded-2xl bg-white/5 p-4 text-center">
+          <div className="flex flex-1 items-center justify-around gap-4 rounded-2xl bg-neutral-900 p-4 text-center">
             {STATS.map((stat) => (
               <div key={stat.label}>
                 <p className="text-lg font-semibold text-brand">
@@ -135,7 +135,7 @@ export function SiteWidgetPreview({
               <button
                 key={action.label}
                 type="button"
-                className="flex flex-col items-center gap-1.5 rounded-2xl bg-white/5 px-4 py-3 text-xs text-white/80 transition-colors hover:bg-white/10"
+                className="flex flex-col items-center gap-1.5 rounded-2xl bg-neutral-900 px-4 py-3 text-xs text-white/80 transition-colors hover:bg-neutral-800"
               >
                 <action.icon className="size-4" />
                 {action.label}

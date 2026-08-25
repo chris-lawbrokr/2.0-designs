@@ -25,7 +25,7 @@ export function PagesPanel({ pages }: PagesPanelProps) {
   const [brand, setBrand] = useState<BrandIdentity | null>(savedBrand);
 
   return (
-    <aside className="flex w-72 shrink-0 flex-col border-r">
+    <aside className="flex w-72 shrink-0 flex-col border-r bg-background">
       <div className="flex items-center justify-between gap-2 px-4 py-3">
         <div className="min-w-0">
           <h2 className="text-sm font-medium">Pages</h2>
