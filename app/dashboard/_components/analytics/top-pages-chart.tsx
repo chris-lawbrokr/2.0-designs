@@ -12,14 +12,14 @@ import {
 } from "@/components/ui/card";
 
 import { pageViews } from "../../_data/analytics";
-import { baseChartOptions, chartAxisLabelStyle } from "./chart-theme";
+import { baseChartOptions, chartAccentColor, chartAxisLabelStyle } from "./chart-theme";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const options: ApexOptions = {
   ...baseChartOptions,
   chart: { ...baseChartOptions.chart, type: "bar", height: 220 },
-  colors: ["var(--chart-2)"],
+  colors: [chartAccentColor],
   plotOptions: {
     bar: { horizontal: true, barHeight: "55%", borderRadius: 4 },
   },

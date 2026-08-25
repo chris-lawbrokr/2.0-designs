@@ -12,14 +12,14 @@ import {
 } from "@/components/ui/card";
 
 import { visitorsTrend } from "../../_data/analytics";
-import { baseChartOptions, chartAxisLabelStyle } from "./chart-theme";
+import { baseChartOptions, chartAccentColor, chartAxisLabelStyle } from "./chart-theme";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const options: ApexOptions = {
   ...baseChartOptions,
   chart: { ...baseChartOptions.chart, type: "area", height: 220 },
-  colors: ["var(--chart-2)"],
+  colors: [chartAccentColor],
   stroke: { curve: "smooth", width: 2 },
   fill: {
     type: "gradient",

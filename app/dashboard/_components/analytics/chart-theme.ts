@@ -27,3 +27,6 @@ export const chartAxisLabelStyle = {
   colors: "var(--muted-foreground)",
   fontSize: "11px",
 };
+
+/** Shared accent color for chart series — Tailwind violet-600. */
+export const chartAccentColor = "#7c3aed";
