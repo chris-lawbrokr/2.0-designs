@@ -10,7 +10,9 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 
-import { pageViews, stats, type Stat } from "../_data/analytics";
+import { TopPagesChart } from "./analytics/top-pages-chart";
+import { VisitorsTrendChart } from "./analytics/visitors-trend-chart";
+import { stats, type Stat } from "../_data/analytics";
 
 export function AnalyticsPanel() {
   return (
@@ -30,7 +32,10 @@ export function AnalyticsPanel() {
             ))}
           </div>
 
-          <TopPagesChart />
+          <div className="grid gap-6 xl:grid-cols-2">
+            <VisitorsTrendChart />
+            <TopPagesChart />
+          </div>
         </div>
       </ScrollArea>
     </section>
@@ -62,39 +67,6 @@ function StatTile({ stat }: { stat: Stat }) {
           </span>
           <span className="text-muted-foreground">{stat.hint}</span>
         </p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function TopPagesChart() {
-  const max = Math.max(...pageViews.map((row) => row.views));
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-sm font-medium">Top pages</CardTitle>
-        <CardDescription>Page views, last 30 days</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <dl className="flex flex-col gap-4">
-          {pageViews.map((row) => (
-            <div key={row.pageId} className="flex flex-col gap-1.5">
-              <div className="flex items-baseline justify-between gap-4 text-sm">
-                <dt className="truncate">{row.label}</dt>
-                <dd className="shrink-0 tabular-nums text-muted-foreground">
-                  {row.views.toLocaleString("en-US")}
-                </dd>
-              </div>
-              <div className="h-2 w-full rounded-full bg-muted">
-                <div
-                  className="h-2 rounded-full bg-chart-2"
-                  style={{ width: `${(row.views / max) * 100}%` }}
-                />
-              </div>
-            </div>
-          ))}
-        </dl>
       </CardContent>
     </Card>
   );

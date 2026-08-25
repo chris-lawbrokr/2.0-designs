@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +16,14 @@ type ContentPanelProps = {
 };
 
 export function ContentPanel({ page }: ContentPanelProps) {
+  const [blocks, setBlocks] = useState<ContentBlock[]>(page.content);
+
+  function updateBlock(id: string, value: string) {
+    setBlocks((current) =>
+      current.map((block) => (block.id === id ? { ...block, value } : block))
+    );
+  }
+
   return (
     <section className="flex min-w-0 flex-1 flex-col">
       <header className="flex items-center justify-between gap-4 px-6 py-3">
@@ -23,7 +35,9 @@ export function ContentPanel({ page }: ContentPanelProps) {
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <Button variant="ghost">Discard</Button>
+          <Button variant="ghost" onClick={() => setBlocks(page.content)}>
+            Discard
+          </Button>
           <Button>Save</Button>
         </div>
       </header>
@@ -32,8 +46,12 @@ export function ContentPanel({ page }: ContentPanelProps) {
 
       <ScrollArea className="min-h-0 flex-1">
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 p-6">
-          {page.content.map((block) => (
-            <ContentBlockField key={block.id} block={block} />
+          {blocks.map((block) => (
+            <ContentBlockField
+              key={block.id}
+              block={block}
+              onChange={(value) => updateBlock(block.id, value)}
+            />
           ))}
 
           <Button variant="outline" className="self-start">
@@ -45,7 +63,13 @@ export function ContentPanel({ page }: ContentPanelProps) {
   );
 }
 
-function ContentBlockField({ block }: { block: ContentBlock }) {
+function ContentBlockField({
+  block,
+  onChange,
+}: {
+  block: ContentBlock;
+  onChange: (value: string) => void;
+}) {
   const fieldId = `block-${block.id}`;
 
   return (
@@ -58,9 +82,18 @@ function ContentBlockField({ block }: { block: ContentBlock }) {
       </Label>
 
       {block.type === "text" ? (
-        <Textarea id={fieldId} rows={4} defaultValue={block.value} />
+        <Textarea
+          id={fieldId}
+          rows={4}
+          value={block.value}
+          onChange={(event) => onChange(event.target.value)}
+        />
       ) : (
-        <Input id={fieldId} defaultValue={block.value} />
+        <Input
+          id={fieldId}
+          value={block.value}
+          onChange={(event) => onChange(event.target.value)}
+        />
       )}
     </div>
   );

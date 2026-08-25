@@ -30,6 +30,12 @@ export const pages: Page[] = [
         type: "text",
         value: "Billed annually. Cancel anytime.",
       },
+      {
+        id: "hero",
+        label: "Hero image",
+        type: "image",
+        value: "/pricing-hero.png",
+      },
     ],
   },
   {
@@ -38,11 +44,18 @@ export const pages: Page[] = [
     meta: "Edited 3d ago",
     status: "draft",
     content: [
+      { id: "title", label: "Headline", type: "heading", value: "About us" },
       {
         id: "story",
         label: "Story",
         type: "text",
         value: "We started in 2024.",
+      },
+      {
+        id: "hero",
+        label: "Hero image",
+        type: "image",
+        value: "/about-hero.png",
       },
     ],
   },
@@ -53,6 +66,18 @@ export const pages: Page[] = [
     status: "draft",
     content: [
       { id: "title", label: "Title", type: "heading", value: "What's new" },
+      {
+        id: "summary",
+        label: "Summary",
+        type: "text",
+        value: "Weekly notes on what shipped and what's next.",
+      },
+      {
+        id: "hero",
+        label: "Hero image",
+        type: "image",
+        value: "/changelog-hero.png",
+      },
     ],
   },
 ];
