@@ -68,7 +68,6 @@ export function PagesPanel({ pages }: PagesPanelProps) {
           ))}
         </nav>
       </ScrollArea>
-
       <NewPageFlow
         open={isCreating}
         onOpenChange={setIsCreating}
