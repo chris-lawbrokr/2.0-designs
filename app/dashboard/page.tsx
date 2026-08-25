@@ -19,39 +19,10 @@ const pages: Page[] = [
       { id: "hero", label: "Hero image", type: "image", value: "/hero.png" },
     ],
   },
-  {
-    id: "pricing",
-    label: "Pricing",
-    meta: "Edited yesterday",
-    content: [
-      { id: "title", label: "Title", type: "heading", value: "Plans" },
-      {
-        id: "note",
-        label: "Billing note",
-        type: "text",
-        value: "Billed annually. Cancel anytime.",
-      },
-    ],
-  },
-  {
-    id: "about",
-    label: "About",
-    meta: "Edited 3d ago",
-    status: "draft",
-    content: [
-      {
-        id: "story",
-        label: "Story",
-        type: "text",
-        value: "We started in 2024.",
-      },
-    ],
-  },
 ];
 
 export default function DashboardPage() {
   const activePage = pages[0];
-
   return (
     <main className="flex min-h-0 flex-1 overflow-hidden m-8 rounded-lg shadow-xl">
       <PagesPanel pages={pages} activePageId={activePage.id} />
