@@ -1,11 +1,14 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
   return (
     <main className="flex flex-1 items-stretch justify-center w-full max-w-[2200px] mx-auto">
       <section className="flex flex-1 items-center justify-center p-4">
         <div className="flex aspect-video w-full max-w-[calc((100vh-3rem-8px)*16/9)] items-center justify-center">
-          <Button>Lawbrokr 2.0</Button>
+          <Link href="/dashboard">
+            <Button>Lawbrokr 2.0</Button>
+          </Link>
         </div>
       </section>
     </main>
