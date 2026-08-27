@@ -8,7 +8,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
-import { ContentBlocksCanvas } from "./content-blocks-canvas";
+import { QuestionFlowCanvas } from "./question-flow-canvas";
 import type { Page } from "./types";
 
 type ContentPanelProps = {
@@ -16,7 +16,7 @@ type ContentPanelProps = {
 };
 
 export function ContentPanel({ page }: ContentPanelProps) {
-  const [blockCount, setBlockCount] = useState(page.content.length);
+  const [questionCount, setQuestionCount] = useState(page.questions.length);
 
   return (
     <section className="flex min-w-0 flex-1 flex-col bg-background">
@@ -34,7 +34,7 @@ export function ContentPanel({ page }: ContentPanelProps) {
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-sm font-medium">{page.label}</h1>
           <p className="truncate text-xs text-muted-foreground">
-            {blockCount} content blocks
+            {questionCount} questions
             {page.meta ? ` · ${page.meta}` : ""}
           </p>
         </div>
@@ -46,10 +46,9 @@ export function ContentPanel({ page }: ContentPanelProps) {
       <Separator />
 
       <div className="relative min-h-0 flex-1">
-        <ContentBlocksCanvas
-          pageLabel={page.label}
-          initialBlocks={page.content}
-          onBlocksChange={(blocks) => setBlockCount(blocks.length)}
+        <QuestionFlowCanvas
+          initialQuestions={page.questions}
+          onQuestionsChange={(questions) => setQuestionCount(questions.length)}
         />
       </div>
     </section>

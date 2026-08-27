@@ -61,7 +61,7 @@ export function PagesPanel({ pages }: PagesPanelProps) {
                 )}
               </span>
               <span className="truncate text-xs text-muted-foreground">
-                {page.content.length} blocks
+                {page.questions.length} questions
                 {page.meta ? ` \u00b7 ${page.meta}` : ""}
               </span>
             </Link>
