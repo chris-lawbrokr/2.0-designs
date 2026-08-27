@@ -6,6 +6,9 @@ export const pages: Page[] = [
     label: "Home",
     meta: "Edited 2h ago",
     status: "live",
+    buildType: "manual",
+    visits: 24980,
+    conversionRate: 3.2,
     content: [
       { id: "h1", label: "Headline", type: "heading", value: "Design faster" },
       {
@@ -22,6 +25,9 @@ export const pages: Page[] = [
     label: "Pricing",
     meta: "Edited yesterday",
     status: "live",
+    buildType: "ai",
+    visits: 16420,
+    conversionRate: 5.6,
     content: [
       { id: "title", label: "Title", type: "heading", value: "Plans" },
       {
@@ -43,6 +49,9 @@ export const pages: Page[] = [
     label: "About",
     meta: "Edited 3d ago",
     status: "draft",
+    buildType: "manual",
+    visits: 9130,
+    conversionRate: 2.1,
     content: [
       { id: "title", label: "Headline", type: "heading", value: "About us" },
       {
@@ -64,6 +73,9 @@ export const pages: Page[] = [
     label: "Changelog",
     meta: "Edited last week",
     status: "draft",
+    buildType: "ai",
+    visits: 7860,
+    conversionRate: 1.4,
     content: [
       { id: "title", label: "Title", type: "heading", value: "What's new" },
       {

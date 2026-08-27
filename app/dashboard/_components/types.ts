@@ -10,5 +10,9 @@ export type Page = {
   label: string;
   meta?: string;
   status?: "draft" | "live";
+  buildType: "manual" | "ai";
+  visits: number;
+  /** Share of visits that convert, as a percentage. */
+  conversionRate: number;
   content: ContentBlock[];
 };

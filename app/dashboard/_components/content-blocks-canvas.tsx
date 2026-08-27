@@ -266,8 +266,8 @@ export function ContentBlocksCanvas({
           <Background
             variant={BackgroundVariant.Dots}
             gap={20}
-            size={1}
-            color="#d4d4d8"
+            size={2}
+            color="#a1a1aa"
           />
           <Controls showInteractive={false} />
           <Panel position="top-right">

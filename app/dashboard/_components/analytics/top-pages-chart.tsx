@@ -18,17 +18,12 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const options: ApexOptions = {
   ...baseChartOptions,
-  chart: { ...baseChartOptions.chart, type: "bar", height: 220 },
+  chart: { ...baseChartOptions.chart, type: "bar", height: 150 },
   colors: [chartAccentColor],
   plotOptions: {
     bar: { horizontal: true, barHeight: "55%", borderRadius: 4 },
   },
-  dataLabels: {
-    enabled: true,
-    style: { colors: ["var(--muted-foreground)"] },
-    formatter: (value) => Number(value).toLocaleString("en-US"),
-    offsetX: 6,
-  },
+  dataLabels: { enabled: false },
   grid: {
     ...baseChartOptions.grid,
     xaxis: { lines: { show: false } },
@@ -51,13 +46,15 @@ export function TopPagesChart() {
   ];
 
   return (
-    <Card>
+    <Card size="sm">
       <CardHeader>
         <CardTitle className="text-sm font-medium">Top pages</CardTitle>
-        <CardDescription>Page views, last 30 days</CardDescription>
+        <CardDescription className="text-xs">
+          Page views, last 30 days
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <Chart options={options} series={series} type="bar" height={220} />
+        <Chart options={options} series={series} type="bar" height={150} />
       </CardContent>
     </Card>
   );
