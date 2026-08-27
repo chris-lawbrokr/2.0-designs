@@ -16,7 +16,9 @@ export function DoneStep({ slug, setup, brand }: DoneStepProps) {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8">
       <div className="text-center">
-        <h2 className="text-lg">Your page is ready!</h2>
+        <h2 className="font-heading text-lg font-medium">
+          Your page is ready!
+        </h2>
         <p className="mt-2 text-sm text-muted-foreground">
           {slug || "/untitled"} was created with{" "}
           {setup === "assisted"
@@ -37,11 +39,7 @@ export function DoneStep({ slug, setup, brand }: DoneStepProps) {
         askPlaceholder="Ask a question about your case…"
       />
 
-      <DialogClose
-        render={
-          <Button className="rounded-full bg-success px-6 text-success-foreground hover:bg-success/80" />
-        }
-      >
+      <DialogClose render={<Button className="rounded-full px-5" />}>
         Done
       </DialogClose>
     </div>

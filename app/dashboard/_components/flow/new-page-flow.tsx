@@ -101,11 +101,11 @@ export function NewPageFlow({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="fixed inset-0 top-0 left-0 flex h-dvh w-screen max-w-none translate-x-0 translate-y-0 flex-col gap-0 rounded-none p-0 ring-0 sm:max-w-none"
+        className="fixed inset-4 top-4 left-4 flex h-auto w-auto max-w-none translate-x-0 translate-y-0 flex-col gap-0 p-0 sm:max-w-none"
       >
         <DialogTitle className="sr-only">Create a new page</DialogTitle>
 
-        <header className="flex items-center justify-between gap-4 px-6 py-4">
+        <header className="flex shrink-0 items-center justify-between gap-4 border-b px-4 py-3">
           <Button
             variant="ghost"
             size="icon-sm"
@@ -121,7 +121,7 @@ export function NewPageFlow({
               <span
                 key={name}
                 data-current={i <= stepIndex || undefined}
-                className="h-1 w-8 rounded-full bg-muted data-current:bg-foreground"
+                className="h-1 w-8 rounded-full bg-muted data-current:bg-primary"
               />
             ))}
           </div>
@@ -133,7 +133,7 @@ export function NewPageFlow({
           </DialogClose>
         </header>
 
-        <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-6 py-10">
+        <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-8 py-10">
           {step === "brand" && (
             <BrandStep
               mode={brandMode}

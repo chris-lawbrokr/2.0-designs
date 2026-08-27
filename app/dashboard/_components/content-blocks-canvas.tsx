@@ -2,7 +2,7 @@
 
 import "reactflow/dist/style.css";
 
-import { Globe } from "lucide-react";
+import { Globe, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactFlow, {
   Background,
@@ -21,6 +21,15 @@ import ReactFlow, {
 } from "reactflow";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,6 +39,7 @@ import type { ContentBlock } from "./types";
 type BlockNodeData = {
   block: ContentBlock;
   onChange: (value: string) => void;
+  onDelete: () => void;
 };
 
 type PageNodeData = {
@@ -61,12 +71,23 @@ function BlockNode({ data }: NodeProps<BlockNodeData>) {
         className="!size-2.5 !border-2 !border-background !bg-muted-foreground"
       />
 
-      <Label htmlFor={fieldId} className="flex items-center gap-2">
-        {block.label}
-        <span className="text-xs font-normal text-muted-foreground">
-          {block.type}
-        </span>
-      </Label>
+      <div className="flex items-start justify-between gap-2">
+        <Label htmlFor={fieldId} className="flex items-center gap-2">
+          {block.label}
+          <span className="text-xs font-normal text-muted-foreground">
+            {block.type}
+          </span>
+        </Label>
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          aria-label={`Delete ${block.label}`}
+          onClick={data.onDelete}
+          className="nodrag -mt-1 -mr-1.5 shrink-0 text-muted-foreground hover:text-destructive"
+        >
+          <Trash2 aria-hidden />
+        </Button>
+      </div>
 
       <div className="nodrag mt-2">
         {block.type === "text" ? (
@@ -135,6 +156,10 @@ export function ContentBlocksCanvas({
   const onValueChangeRef = useRef<(id: string, value: string) => void>(
     () => {}
   );
+  const onDeleteRef = useRef<(id: string) => void>(() => {});
+
+  // Block awaiting delete confirmation — the trash button only stages it here.
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const [nodes, setNodes] = useState<Node[]>(() => [
     ...initialBlocks.map((block, index) => ({
@@ -145,6 +170,7 @@ export function ContentBlocksCanvas({
       data: {
         block,
         onChange: (value: string) => onValueChangeRef.current(block.id, value),
+        onDelete: () => onDeleteRef.current(block.id),
       },
     })),
     {
@@ -156,40 +182,62 @@ export function ContentBlocksCanvas({
     },
   ]);
 
-  const emitBlocks = useCallback(
-    (current: Node[]) =>
-      onBlocksChange(
-        current
-          .filter((node): node is Node<BlockNodeData> => node.type === "block")
-          .map((node) => node.data.block)
-      ),
-    [onBlocksChange]
-  );
+  // Mirror block data up to the parent after render — calling setBlockCount
+  // from inside a setNodes updater would update ContentPanel mid-render.
+  useEffect(() => {
+    onBlocksChange(
+      nodes
+        .filter((node): node is Node<BlockNodeData> => node.type === "block")
+        .map((node) => node.data.block)
+    );
+  }, [nodes, onBlocksChange]);
 
-  const handleValueChange = useCallback(
-    (id: string, value: string) => {
-      setNodes((current) => {
-        const next = current.map((node) =>
-          node.type === "block" && node.id === id
-            ? {
-                ...node,
-                data: {
-                  ...node.data,
-                  block: { ...node.data.block, value },
-                },
-              }
-            : node
-        );
-        emitBlocks(next);
-        return next;
-      });
-    },
-    [emitBlocks]
-  );
+  const handleValueChange = useCallback((id: string, value: string) => {
+    setNodes((current) =>
+      current.map((node) =>
+        node.type === "block" && node.id === id
+          ? {
+              ...node,
+              data: {
+                ...node.data,
+                block: { ...node.data.block, value },
+              },
+            }
+          : node
+      )
+    );
+  }, []);
 
   useEffect(() => {
     onValueChangeRef.current = handleValueChange;
   }, [handleValueChange]);
+
+  const handleDeleteBlock = useCallback((id: string) => {
+    setNodes((current) => {
+      const remaining = current.filter((node) => node.id !== id);
+      const pageNode = remaining[remaining.length - 1];
+      return [
+        ...remaining.slice(0, -1),
+        {
+          ...pageNode,
+          data: {
+            ...pageNode.data,
+            blockCount: remaining.filter((node) => node.type === "block")
+              .length,
+          },
+        },
+      ];
+    });
+  }, []);
+
+  useEffect(() => {
+    onDeleteRef.current = setPendingDeleteId;
+  }, []);
+
+  const confirmDelete = useCallback(() => {
+    if (pendingDeleteId) handleDeleteBlock(pendingDeleteId);
+    setPendingDeleteId(null);
+  }, [pendingDeleteId, handleDeleteBlock]);
 
   const handleNodesChange = useCallback((changes: NodeChange[]) => {
     setNodes((current) => applyNodeChanges(changes, current));
@@ -212,6 +260,7 @@ export function ContentBlocksCanvas({
         data: {
           block,
           onChange: (value: string) => onValueChangeRef.current(block.id, value),
+          onDelete: () => onDeleteRef.current(block.id),
         },
       };
       // Insert before the page node so the page card stays last/on top.
@@ -220,11 +269,9 @@ export function ContentBlocksCanvas({
         ...pageNode,
         data: { ...pageNode.data, blockCount: blockNodes.length + 1 },
       };
-      const next = [...current.slice(0, -1), newNode, updatedPageNode];
-      emitBlocks(next);
-      return next;
+      return [...current.slice(0, -1), newNode, updatedPageNode];
     });
-  }, [emitBlocks]);
+  }, []);
 
   const edges = useMemo<Edge[]>(
     () =>
@@ -245,6 +292,10 @@ export function ContentBlocksCanvas({
           },
         })),
     [nodes]
+  );
+
+  const pendingDeleteBlock = nodes.find(
+    (node) => node.type === "block" && node.id === pendingDeleteId
   );
 
   return (
@@ -277,6 +328,33 @@ export function ContentBlocksCanvas({
           </Panel>
         </ReactFlow>
       </div>
+
+      <Dialog
+        open={pendingDeleteId !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDeleteId(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete block?</DialogTitle>
+            <DialogDescription>
+              {pendingDeleteBlock
+                ? `"${pendingDeleteBlock.data.block.label}" will be removed`
+                : "This block will be removed"}{" "}
+              from the page. This can&apos;t be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose render={<Button variant="outline" />}>
+              Cancel
+            </DialogClose>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Delete block
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </ReactFlowProvider>
   );
 }

@@ -6,6 +6,7 @@ import {
   LayoutGrid,
   List,
   ListFilter,
+  Plus,
   Search,
   Settings,
   Sparkles,
@@ -18,7 +19,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+import { NewPageFlow } from "../_components/flow/new-page-flow";
 import type { Page } from "../_components/types";
+import { savedBrand, type BrandIdentity } from "../_data/brand";
 import { getPages } from "../_data/pages";
 
 const suggestedActions = [
@@ -30,12 +33,24 @@ const suggestedActions = [
 export default function PagesIndexPage() {
   const pages = getPages();
   const [view, setView] = useState<"list" | "grid">("list");
+  const [isCreating, setIsCreating] = useState(false);
+  // Scraped once per workspace, then reused by every page created afterwards.
+  const [brand, setBrand] = useState<BrandIdentity | null>(savedBrand);
 
   return (
     <section className="flex min-w-0 flex-1 flex-col bg-background">
       <ScrollArea className="min-h-0 flex-1">
         <div className="mx-auto flex min-h-full w-full max-w-4xl flex-col gap-6 px-6 py-10">
-          <h1 className="text-2xl font-semibold tracking-tight">Pages</h1>
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="text-2xl font-semibold tracking-tight">Pages</h1>
+            <Button
+              className="rounded-full"
+              onClick={() => setIsCreating(true)}
+            >
+              <Plus aria-hidden />
+              New page
+            </Button>
+          </div>
 
           <div className="flex items-center gap-2">
             <div className="relative w-full max-w-sm">
@@ -120,6 +135,13 @@ export default function PagesIndexPage() {
               ))}
             </div>
           </div>
+
+          <NewPageFlow
+            open={isCreating}
+            onOpenChange={setIsCreating}
+            brand={brand}
+            onBrandChange={setBrand}
+          />
         </div>
       </ScrollArea>
     </section>

@@ -30,10 +30,7 @@ export function BrandReviewStep({
       <BrandReview brand={brand} />
 
       <div className="mt-10 flex items-center gap-3">
-        <Button
-          onClick={onConfirm}
-          className="rounded-full bg-success px-6 text-success-foreground hover:bg-success/80"
-        >
+        <Button onClick={onConfirm} className="rounded-full px-5">
           Looks good
         </Button>
         <Button variant="ghost" onClick={onRescan}>

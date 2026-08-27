@@ -1,5 +1,6 @@
 import type * as React from "react";
 
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +20,7 @@ export function FlowStep({
 }) {
   return (
     <div className={cn("mx-auto w-full max-w-2xl", className)}>
-      <h2 className="text-lg">{title}</h2>
+      <h2 className="font-heading text-lg font-medium">{title}</h2>
       <div className="mt-6">{children}</div>
     </div>
   );
@@ -28,7 +29,7 @@ export function FlowStep({
 export function PillInput({ className, ...props }: React.ComponentProps<"input">) {
   return (
     <Input
-      className={cn("h-11 rounded-full border-2 px-4 shadow-none", className)}
+      className={cn("h-10 rounded-full px-4", className)}
       {...props}
     />
   );
@@ -43,11 +44,12 @@ export function Chip({ tone = "muted", className, ...props }: ChipProps) {
     <button
       type="button"
       className={cn(
-        "w-full rounded-md px-3 py-2 text-left text-sm transition-colors",
-        tone === "solid" && "bg-muted-foreground text-background",
-        tone === "muted" && "bg-muted text-foreground hover:bg-muted/70",
+        "w-full rounded-lg px-3 py-2 text-left text-sm transition-colors",
+        tone === "solid" &&
+          "bg-secondary font-medium text-secondary-foreground",
+        tone === "muted" && "border bg-card hover:bg-muted/50",
         tone === "outline" &&
-          "border-2 border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground hover:text-foreground",
+          "border border-dashed text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground",
         className
       )}
       {...props}
@@ -100,14 +102,16 @@ export function OptionCard({
       onClick={onSelect}
       aria-pressed={selected}
       data-selected={selected || undefined}
-      className="flex w-56 flex-col gap-3 rounded-lg border-2 border-transparent bg-muted p-4 text-left transition-colors hover:bg-muted/70 data-selected:border-foreground"
+      className="flex w-56 flex-col gap-3 rounded-xl border bg-card p-4 text-left transition-all hover:bg-muted/50 data-selected:border-primary data-selected:ring-3 data-selected:ring-primary/20"
     >
-      <span className="text-sm font-medium">{title}</span>
-      {recommended && (
-        <span className="text-[0.7rem] tracking-wide text-muted-foreground">
-          RECOMMENDED
-        </span>
-      )}
+      <span className="flex flex-wrap items-center justify-between gap-2">
+        <span className="text-sm font-medium">{title}</span>
+        {recommended && (
+          <Badge variant="secondary" className="shrink-0">
+            Recommended
+          </Badge>
+        )}
+      </span>
       <ul className="flex list-disc flex-col gap-1 pl-4 text-xs text-muted-foreground">
         {bullets.map((bullet) => (
           <li key={bullet}>{bullet}</li>
@@ -124,7 +128,7 @@ export function ScanningStep({ label }: { label: string }) {
         {[0, 1, 2].map((i) => (
           <span
             key={i}
-            className="size-2 animate-bounce rounded-full bg-muted-foreground"
+            className="size-2 animate-bounce rounded-full bg-primary"
             style={{ animationDelay: `${i * 0.15}s` }}
           />
         ))}

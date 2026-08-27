@@ -48,7 +48,7 @@ export function BrandUrlStep({
         <Button
           type="submit"
           disabled={!url.trim()}
-          className="ml-auto rounded-full border-2 bg-background px-5 text-foreground hover:bg-muted"
+          className="ml-auto rounded-full px-5"
         >
           Confirm
         </Button>

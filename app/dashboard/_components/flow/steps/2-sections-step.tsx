@@ -46,10 +46,7 @@ export function SectionsStep({ slug, onSlugChange, onNext }: SectionsStepProps) 
         </div>
       </div>
 
-      <Button
-        onClick={onNext}
-        className="mt-10 rounded-full bg-success px-6 text-success-foreground hover:bg-success/80"
-      >
+      <Button onClick={onNext} className="mt-10 rounded-full px-5">
         Looks good
       </Button>
     </FlowStep>
