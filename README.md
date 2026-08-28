@@ -13,3 +13,4 @@ http://localhost:3000
 ## Log
 
 - Aug 28 — iterating on new page flow designs
+- Aug 28 — ui polish on charts and layout
